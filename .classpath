@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-24">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/com.ibm.icu_78.3.0.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/com.ibm.icu_78.3.0.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/jakarta.annotation-api_3.0.0.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/jakarta.annotation-api_3.0.0.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.core.commands_3.12.500.v20251103-0733.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.core.commands_3.12.500.v20251103-0733.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.core.runtime_3.34.200.v20251220-0953.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.core.runtime_3.34.200.v20251220-0953.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.e4.ui.di_1.5.700.v20250917-0901.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.e4.ui.di_1.5.700.v20250917-0901.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.equinox.common_3.20.400.v20260512-1534.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.equinox.common_3.20.400.v20260512-1534.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.equinox.registry_3.12.600.v20250906-0651.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.equinox.registry_3.12.600.v20250906-0651.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.jface_3.39.100.v20260422-1115.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.jface_3.39.100.v20260422-1115.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.jface.text_3.31.0.v20260428-1719.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.jface.text_3.31.0.v20260428-1719.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.osgi_3.24.200.v20260515-1403.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.osgi_3.24.200.v20260515-1403.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.swt.win32.win32.x86_64_3.134.0.v20260515-1429.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.swt.win32.win32.x86_64_3.134.0.v20260515-1429.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.text_3.14.700.v20260326-1107.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.text_3.14.700.v20260326-1107.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.ui.forms_3.14.100.v20260430-0844.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.ui.forms_3.14.100.v20260430-0844.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.ui.workbench_3.139.0.v20260601-0955.jar" sourcepath="C:/Users/romer/Desktop/Java/eclipse/plugins/org.eclipse.ui.workbench_3.139.0.v20260601-0955.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
