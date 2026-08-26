@@ -18,6 +18,9 @@ public class Tablero {
     }
 
     public void setFicha(int fila, int col, Ficha Ficha) {
+    	verificarValor(fila);
+    	verificarValor(col);
+    	
         cuadricula[fila][col] = Ficha;
     }
 
@@ -47,16 +50,21 @@ public class Tablero {
     			if (fichaActual == null) {
     				continue;
     			}
-    			if (f+mov.getFila()>= TAMANIO || c+mov.getCol() >= TAMANIO) {
+    			
+    			int filaDestino = f+mov.getFila();
+    			int colDestino = c+mov.getCol();
+    			if (!dentroDeLimites(filaDestino, colDestino)) {
     				continue;
     			}
-    			Ficha fichaDestino = cuadricula[f+mov.getFila()][c+mov.getCol()];
+    			
+    			Ficha fichaDestino = cuadricula[filaDestino][colDestino];
     			if(fichaDestino==null ) {
     				fichaDestino = fichaActual;
     				cuadricula[f][c]=null;
     			}
+    			
     			else if (fichaActual.puedeSumarseCon(fichaDestino)) {
-    				cuadricula[f+mov.getFila()][c+mov.getCol()] = new Ficha (fichaDestino.valorSumado(fichaActual));
+    				cuadricula[filaDestino][colDestino] = new Ficha (fichaDestino.valorSumado(fichaActual));
     			}
     		}
     	}
@@ -77,6 +85,16 @@ public class Tablero {
     	}
   	
     	return ordenAvance;
+    }
+ 
+    private void verificarValor(int valor) {
+    	if(valor>=TAMANIO) {
+    		throw new IllegalArgumentException("Las coordenadas de fila y/o columna no pueden sobrepasar las dimensiones del tablero");
+    	}
+    }
+    
+    private boolean dentroDeLimites(int f, int c) {
+    	return f < TAMANIO && f >= 0 && c < TAMANIO && c >=0;
     }
     
 }
