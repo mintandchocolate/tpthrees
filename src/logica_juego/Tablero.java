@@ -87,18 +87,31 @@ public class Tablero {
     			}
     		}
     	}
-    	aparecerFichaNueva(mov);	
+    	generarFichaNueva(mov);	
     }
     
-    public void aparecerFichaNueva(Movimiento mov) {
+    /* el metodo ahora chequea si existe algún espacio vacío y si lo hay se 
+     * dedica a intentar espacios hasta que encuentre uno
+     */
+    public void generarFichaNueva(Movimiento mov) {
 		int valorFichaNuevaAlBorde = randomizador.nextInt(3) + 1;
-		if (posicionEstaVacia(posicionFichaNueva(mov)[0], posicionFichaNueva(mov)[1])){
-			setFicha(posicionFichaNueva(mov)[0], posicionFichaNueva(mov)[1], new Ficha(valorFichaNuevaAlBorde));
+		if(hayEspacioParaNuevaFicha(mov)) {
+			while (true) {
+				int[] posicionCandidata = posicionFichaNueva(mov);
+				if (posicionEstaVacia(posicionCandidata[0], posicionCandidata[1])) {
+					setFicha(posicionCandidata[0], posicionCandidata[1], new Ficha(valorFichaNuevaAlBorde));
+					break;
+				} else {
+					continue;
+				}
+			}
 		}
+
     }
     
-    public int[] posicionFichaNueva (Movimiento mov) {	
- 	   int posicionAzar = randomizador.nextInt(TAMANIO-1);
+    public int[] posicionFichaNueva (Movimiento mov) {
+    	// removí el -1 de TAMANIO pues el randomizador empieza en 0 y acaba en el final -1 de todas formas
+ 	   int posicionAzar = randomizador.nextInt(TAMANIO);
  	    switch(mov) {
  	    case ARRIBA : return new int[] {TAMANIO-1, posicionAzar};
  	    case ABAJO : return new int[] {0, posicionAzar};
@@ -108,6 +121,41 @@ public class Tablero {
  	    }
  			   
  	}
+    
+    // metodo para saber si debe buscar un lugar, porque lo hay, o simplemente no hacer nada
+    public boolean hayEspacioParaNuevaFicha(Movimiento mov) {
+    	boolean hayEspacio = false;
+    	switch(mov) {
+    	
+    	case ARRIBA :
+    		for (int posicion = 0; posicion < TAMANIO; posicion++) {
+    			hayEspacio = hayEspacio || getFicha(TAMANIO - 1, posicion) == null;
+    		}
+    		return hayEspacio;
+    		
+    	case ABAJO :
+    		for (int posicion = 0; posicion < TAMANIO; posicion++) {
+    			hayEspacio = hayEspacio || getFicha(0, posicion) == null;
+    		}
+    		return hayEspacio;
+    		
+    	case IZQUIERDA :
+    		for (int posicion = 0; posicion < TAMANIO; posicion++) {
+    			hayEspacio = hayEspacio || getFicha(posicion, TAMANIO - 1) == null;
+    		}
+    		return hayEspacio;
+    		
+    	case DERECHA :
+    		for (int posicion = 0; posicion < TAMANIO; posicion++) {
+    			hayEspacio = hayEspacio || getFicha(posicion, 0) == null;
+    		}
+    		return hayEspacio;
+    		
+    	default : 
+    		throw new IllegalArgumentException("Posición inválida");
+    		
+    	}
+    }
     
     private int[] ordenDeMovimiento (int posicion) { //porque no siempre se empiezan a mover de izq a der.
     	int[] ordenAvance = new int [TAMANIO];
@@ -135,13 +183,16 @@ public class Tablero {
     	return f < TAMANIO && f >= 0 && c < TAMANIO && c >=0;
     }
     
-
+/* saqué el -1 de TAMANIO porque de esa forma no lograba generar fichas correctamente
+ * generaba las fichas en un patrón de 3x3
+ */
+    
    public void iniciarTablero() {
 	   int contador = 0;
 	   
 	   while (contador < 9) {
-		   int valorFilaAleatorio = randomizador.nextInt(TAMANIO-1);
-		   int valorColumnaAleatorio = randomizador.nextInt(TAMANIO-1);
+		   int valorFilaAleatorio = randomizador.nextInt(TAMANIO);
+		   int valorColumnaAleatorio = randomizador.nextInt(TAMANIO);
 		   
 		   if (posicionEstaVacia(valorFilaAleatorio, valorColumnaAleatorio)) {
 			   int valorInicial = randomizador.nextInt(3) + 1;

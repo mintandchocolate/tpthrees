@@ -27,6 +27,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import java.awt.event.ActionEvent;
+import java.awt.Font;
 
 import logica_juego.Tablero;
 import logica_juego.Ficha;
@@ -39,6 +40,8 @@ public class Main implements Observer {
 	private JFrame frmThrees;
 	private JTable tablaDelJuego;
 	private Tablero tablero;
+	private Color AZULFICHA = new Color(114, 202, 242);
+	private Color ROJOFICHA = new Color(241, 103, 128);
 
 	/**
 	 * Launch the application.
@@ -160,17 +163,17 @@ public class Main implements Observer {
 	            } else {
 	                int valor = (int) value;
 	                if (valor == 1) {
-	                    celda.setBackground(Color.BLUE);
+	                    celda.setBackground(AZULFICHA);
 	                    celda.setForeground(Color.WHITE);
 	                } else if (valor == 2) {
-	                    celda.setBackground(Color.RED);
+	                    celda.setBackground(ROJOFICHA);
 	                    celda.setForeground(Color.WHITE);
 	                } else {
 	                    celda.setBackground(Color.WHITE);
 	                    celda.setForeground(Color.BLACK);
 	                }
 	            }
-
+	            celda.setFont(new Font("Verdana", Font.BOLD, 24));
 	            return celda;
 	        }
 	    };
