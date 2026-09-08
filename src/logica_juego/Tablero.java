@@ -3,12 +3,16 @@ package logica_juego;
 import java.util.ArrayList;
 import java.util.List;
 
+import threes.Observer;
+
 public class Tablero {
 
     public static final int TAMANIO = 4;
 
     private final Ficha[][] cuadricula;
-
+    
+    private List<Observer> observers = new ArrayList<>();
+  
     public Tablero() {
         cuadricula = new Ficha[TAMANIO][TAMANIO];
     }
@@ -38,6 +42,15 @@ public class Tablero {
             }
         }
         return casillas;
+    }
+    //COSAS DEL OBSERVER
+    public void addObserver(Observer obs) {
+    	observers.add(obs);
+    }
+    public void notificarCambio() {
+    	for(Observer obs : observers) {
+    		obs.tableroActualizado(this);
+    	}
     }
     
     public void moverFichas(Movimiento mov) {
