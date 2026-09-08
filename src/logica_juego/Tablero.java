@@ -2,11 +2,15 @@ package logica_juego;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import threes.Observer;
 
 public class Tablero {
 
+	// para el metodo del final para testear
+	Random randomizador = new Random();
+	
     public static final int TAMANIO = 4;
 
     private final Ficha[][] cuadricula;
@@ -72,12 +76,13 @@ public class Tablero {
     			
     			Ficha fichaDestino = cuadricula[filaDestino][colDestino];
     			if(fichaDestino==null ) {
-    				fichaDestino = fichaActual;
+    				cuadricula[filaDestino][colDestino] = fichaActual;
     				cuadricula[f][c]=null;
     			}
     			
     			else if (fichaActual.puedeSumarseCon(fichaDestino)) {
     				cuadricula[filaDestino][colDestino] = new Ficha (fichaDestino.valorSumado(fichaActual));
+    				cuadricula[f][c] = null;
     			}
     		}
     	}
@@ -110,4 +115,26 @@ public class Tablero {
     	return f < TAMANIO && f >= 0 && c < TAMANIO && c >=0;
     }
     
+    // para ver que el programa funcione hice este coso feo para arrancar
+    // si se puede mejorar o reemplazarlo mejor...
+    // basicamente genera nueve piezas que pueden ser 1, 2 o 3 en 9 posiciones
+   public void llenarTablero() {
+	   int contador = 0;
+	   
+	   while (contador < 9) {
+		   for (int fila = 0; fila < this.TAMANIO && contador < 9; fila++) {
+			   for (int columna = 0; columna < this.TAMANIO && contador < 9; columna++) {
+				   int chanceDeFilaElegida = randomizador.nextInt(16);
+				   // 1/16 chance de elegir esa celda, para que tengan chances iguales
+				   if (chanceDeFilaElegida == 15 && estaVacia(fila, columna)) {
+					   int valorInicial = randomizador.nextInt(3) + 1;
+					   Ficha ficha = new Ficha(valorInicial);
+					   setFicha(fila, columna, ficha);
+					   contador++;
+				   }
+			   }
+		   }
+	   }
+   }
+   
 }
