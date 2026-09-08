@@ -78,6 +78,7 @@ public class Tablero {
     			if(fichaDestino==null ) {
     				cuadricula[filaDestino][colDestino] = fichaActual;
     				cuadricula[fila][columna]=null;
+
     			}
     			
     			else if (fichaActual.puedeSumarseCon(fichaDestino)) {
@@ -86,8 +87,27 @@ public class Tablero {
     			}
     		}
     	}
-    	
+    	aparecerFichaNueva(mov);	
     }
+    
+    public void aparecerFichaNueva(Movimiento mov) {
+		int valorFichaNuevaAlBorde = randomizador.nextInt(3) + 1;
+		if (posicionEstaVacia(posicionFichaNueva(mov)[0], posicionFichaNueva(mov)[1])){
+			setFicha(posicionFichaNueva(mov)[0], posicionFichaNueva(mov)[1], new Ficha(valorFichaNuevaAlBorde));
+		}
+    }
+    
+    public int[] posicionFichaNueva (Movimiento mov) {	
+ 	   int posicionAzar = randomizador.nextInt(TAMANIO-1);
+ 	    switch(mov) {
+ 	    case ARRIBA : return new int[] {TAMANIO-1, posicionAzar};
+ 	    case ABAJO : return new int[] {0, posicionAzar};
+ 	    case IZQUIERDA : return new int[] {posicionAzar,TAMANIO-1};
+ 	    case DERECHA : return new int[] {posicionAzar,0};
+ 	    default : throw new IllegalArgumentException("Posición inválida");
+ 	    }
+ 			   
+ 	}
     
     private int[] ordenDeMovimiento (int posicion) { //porque no siempre se empiezan a mover de izq a der.
     	int[] ordenAvance = new int [TAMANIO];
@@ -106,7 +126,7 @@ public class Tablero {
     }
  
     private void verificarValor(int valor) {
-    	if(valor>=TAMANIO) {
+    	if(valor>=TAMANIO || valor<0) {
     		throw new IllegalArgumentException("Las coordenadas de fila y/o columna no pueden sobrepasar las dimensiones del tablero");
     	}
     }
@@ -120,8 +140,8 @@ public class Tablero {
 	   int contador = 0;
 	   
 	   while (contador < 9) {
-		   int valorFilaAleatorio = randomizador.nextInt(3);
-		   int valorColumnaAleatorio = randomizador.nextInt(3);
+		   int valorFilaAleatorio = randomizador.nextInt(TAMANIO-1);
+		   int valorColumnaAleatorio = randomizador.nextInt(TAMANIO-1);
 		   
 		   if (posicionEstaVacia(valorFilaAleatorio, valorColumnaAleatorio)) {
 			   int valorInicial = randomizador.nextInt(3) + 1;
@@ -131,5 +151,8 @@ public class Tablero {
 				   }
 			   }
 		   }
+ 
+
    }
+
    
