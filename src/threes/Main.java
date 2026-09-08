@@ -63,7 +63,7 @@ public class Main implements Observer {
 		initialize();
 		funcionalidadTeclas();
 		tablero = new Tablero();
-		tablero.llenarTablero();
+		tablero.iniciarTablero();
 		actualizarTablero(tablero);
 	}
 

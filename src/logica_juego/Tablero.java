@@ -32,7 +32,7 @@ public class Tablero {
         cuadricula[fila][col] = Ficha;
     }
 
-    public boolean estaVacia(int fila, int col) {
+    public boolean posicionEstaVacia (int fila, int col) {
         return cuadricula[fila][col] == null;
     }
 
@@ -61,15 +61,15 @@ public class Tablero {
     	int [] direccionFilas = ordenDeMovimiento(mov.getFila());
     	int [] direccionCol = ordenDeMovimiento(mov.getCol());
     	
-    	for (int f : direccionFilas) {
-    		for (int c : direccionCol) {
-    			Ficha fichaActual = cuadricula[f][c];
+    	for (int fila : direccionFilas) {
+    		for (int columna : direccionCol) {
+    			Ficha fichaActual = cuadricula[fila][columna];
     			if (fichaActual == null) {
     				continue;
     			}
     			
-    			int filaDestino = f+mov.getFila();
-    			int colDestino = c+mov.getCol();
+    			int filaDestino = fila+mov.getFila();
+    			int colDestino = columna+mov.getCol();
     			if (!dentroDeLimites(filaDestino, colDestino)) {
     				continue;
     			}
@@ -77,12 +77,12 @@ public class Tablero {
     			Ficha fichaDestino = cuadricula[filaDestino][colDestino];
     			if(fichaDestino==null ) {
     				cuadricula[filaDestino][colDestino] = fichaActual;
-    				cuadricula[f][c]=null;
+    				cuadricula[fila][columna]=null;
     			}
     			
     			else if (fichaActual.puedeSumarseCon(fichaDestino)) {
     				cuadricula[filaDestino][colDestino] = new Ficha (fichaDestino.valorSumado(fichaActual));
-    				cuadricula[f][c] = null;
+    				cuadricula[fila][columna] = null;
     			}
     		}
     	}
@@ -115,26 +115,21 @@ public class Tablero {
     	return f < TAMANIO && f >= 0 && c < TAMANIO && c >=0;
     }
     
-    // para ver que el programa funcione hice este coso feo para arrancar
-    // si se puede mejorar o reemplazarlo mejor...
-    // basicamente genera nueve piezas que pueden ser 1, 2 o 3 en 9 posiciones
-   public void llenarTablero() {
+
+   public void iniciarTablero() {
 	   int contador = 0;
 	   
 	   while (contador < 9) {
-		   for (int fila = 0; fila < this.TAMANIO && contador < 9; fila++) {
-			   for (int columna = 0; columna < this.TAMANIO && contador < 9; columna++) {
-				   int chanceDeFilaElegida = randomizador.nextInt(16);
-				   // 1/16 chance de elegir esa celda, para que tengan chances iguales
-				   if (chanceDeFilaElegida == 15 && estaVacia(fila, columna)) {
-					   int valorInicial = randomizador.nextInt(3) + 1;
-					   Ficha ficha = new Ficha(valorInicial);
-					   setFicha(fila, columna, ficha);
-					   contador++;
+		   int valorFilaAleatorio = randomizador.nextInt(3);
+		   int valorColumnaAleatorio = randomizador.nextInt(3);
+		   
+		   if (posicionEstaVacia(valorFilaAleatorio, valorColumnaAleatorio)) {
+			   int valorInicial = randomizador.nextInt(3) + 1;
+			   Ficha fichaNueva = new Ficha(valorInicial);
+			   setFicha(valorFilaAleatorio, valorColumnaAleatorio, fichaNueva);
+			   contador++;
 				   }
 			   }
 		   }
-	   }
    }
    
-}
