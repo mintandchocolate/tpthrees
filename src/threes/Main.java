@@ -8,20 +8,12 @@ import java.awt.BorderLayout;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.SwingConstants;
-import java.awt.Rectangle;
 import javax.swing.JPanel;
-import java.awt.GridLayout;
-import java.awt.Dimension;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.GridBagLayout;
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -33,13 +25,13 @@ import logica_juego.Tablero;
 import logica_juego.Ficha;
 import logica_juego.Movimiento;
 
-import logica_juego.Tablero;
 
 public class Main implements Observer {
 
 	private JFrame frmThrees;
 	private JTable tablaDelJuego;
 	private Tablero tablero;
+	private Controller controller;
 	private Color AZULFICHA = new Color(114, 202, 242);
 	private Color ROJOFICHA = new Color(241, 103, 128);
 
@@ -59,20 +51,19 @@ public class Main implements Observer {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
 	public Main() {
 		initialize();
 		funcionalidadTeclas();
+		iniciarPartida();
+	}
+
+	private void iniciarPartida() {
 		tablero = new Tablero();
+		controller = new Controller(tablero, this);
 		tablero.iniciarTablero();
 		actualizarTablero(tablero);
 	}
-
-	/**
-	 * Initialize the contents of the frame.
-	 */
+	
 	private void initialize() {
 		frmThrees =  new JFrame();
 		frmThrees.setTitle("THREES");
@@ -129,8 +120,15 @@ public class Main implements Observer {
 	//COSAS DEL OBSERVER
 	@Override
 	public void tableroActualizado(Tablero tablero) {
-		// TODO Auto-generated method stub
-		
+		actualizarTablero(tablero);
+		verificarFinDelJuego();
+
+	}
+	
+	private void verificarFinDelJuego() {
+		if (!tablero.hayMovimientosPosibles()) {
+			//mostrarDialogoGameOver();
+		}
 	}
 
 	public void actualizarTablero(Tablero tablero) {
@@ -209,8 +207,7 @@ public class Main implements Observer {
 	            teclasPresionadas++;
 	            if (teclasPresionadas == 1 && !bloqueoTeclas) {
 	                bloqueoTeclas = true;
-	                tablero.moverFichas(Movimiento.ARRIBA);
-	                actualizarTablero(tablero);
+	                controller.mover(Movimiento.ARRIBA);
 	            }
 	        }
 	    });
@@ -232,8 +229,7 @@ public class Main implements Observer {
 	            teclasPresionadas++;
 	            if (teclasPresionadas == 1 && !bloqueoTeclas) {
 	            	bloqueoTeclas = true;
-	                tablero.moverFichas(Movimiento.ABAJO);
-	                actualizarTablero(tablero);
+	            	controller.mover(Movimiento.ABAJO);
 	            }
 	        }
 	    });
@@ -255,8 +251,7 @@ public class Main implements Observer {
 	            teclasPresionadas++;
 	            if (teclasPresionadas == 1 && !bloqueoTeclas) {
 	            	bloqueoTeclas = true;
-	                tablero.moverFichas(Movimiento.IZQUIERDA);
-	                actualizarTablero(tablero);
+	            	controller.mover(Movimiento.IZQUIERDA);
 	            }
 	        }
 	    });
@@ -278,8 +273,7 @@ public class Main implements Observer {
 	            teclasPresionadas++;
 	            if (teclasPresionadas == 1 && !bloqueoTeclas) {
 	            	bloqueoTeclas = true;
-	                tablero.moverFichas(Movimiento.DERECHA);
-	                actualizarTablero(tablero);
+	            	controller.mover(Movimiento.DERECHA);
 	            }
 	        }
 	    });
