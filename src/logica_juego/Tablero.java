@@ -70,30 +70,9 @@ public class Tablero {
 
         for (int fila : direccionFilas) {
             for (int columna : direccionCol) {
-                Ficha fichaActual = cuadricula[fila][columna];
-                if (fichaActual == null) {
-                    continue;
-                }
-
-                int filaDestino = fila + mov.getFila();
-                int colDestino = columna + mov.getCol();
-                if (!dentroDeLimites(filaDestino, colDestino)) {
-                    continue;
-                }
-
-                Ficha fichaDestino = cuadricula[filaDestino][colDestino];
-                if (fichaDestino == null) {
-                    cuadricula[filaDestino][colDestino] = fichaActual;
-                    cuadricula[fila][columna] = null;
-                    huboCambio = true;
-                } else if (fichaActual.puedeSumarseCon(fichaDestino)) {
-                    cuadricula[filaDestino][colDestino] = new Ficha(fichaDestino.valorSumado(fichaActual));
-                    cuadricula[fila][columna] = null;
-                    huboCambio = true;
+                huboCambio|= moverFichaIndividual(fila, columna, mov);       
                 }
             }
-        }
-
 
         if (huboCambio) {
             generarFichaNueva(mov);
@@ -101,6 +80,35 @@ public class Tablero {
         }
 
         return huboCambio;
+    }
+    
+    public boolean moverFichaIndividual(int fila, int columna, Movimiento mov) {
+    	Ficha fichaActual = cuadricula[fila][columna];
+    	if (fichaActual == null) {
+    		return false;
+    		}
+    	
+        int filaDestino = fila + mov.getFila();
+        int colDestino = columna + mov.getCol();
+        if (!dentroDeLimites(filaDestino, colDestino)) {
+            return false;
+        }
+        
+        Ficha fichaDestino = cuadricula[filaDestino][colDestino];
+        if (fichaDestino == null) {
+            cuadricula[filaDestino][colDestino] = fichaActual;
+            cuadricula[fila][columna] = null;
+            return true;
+        }
+        
+        if (fichaActual.puedeSumarseCon(fichaDestino)) {
+            cuadricula[filaDestino][colDestino] = new Ficha(fichaDestino.valorSumado(fichaActual));
+            cuadricula[fila][columna] = null;
+            return true;
+        }
+        
+        return false;
+    	
     }
 
     public void generarFichaNueva(Movimiento mov) {
