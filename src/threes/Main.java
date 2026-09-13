@@ -159,7 +159,7 @@ public class Main implements Observer {
 		Object[] opciones = {"Reiniciar", "Salir"};
 		int eleccion = JOptionPane.showOptionDialog(
 			frmThrees,
-			"¡Game Over! No quedan más movimientos posibles.",
+			"¡Game Over! Puntuación final: " + tablero.calcularPuntaje()+". No quedan más movimientos posibles.",
 			"Fin del Juego",
 			JOptionPane.YES_NO_OPTION,
 			JOptionPane.INFORMATION_MESSAGE,
