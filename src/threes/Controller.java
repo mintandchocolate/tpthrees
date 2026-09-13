@@ -11,9 +11,9 @@ import logica_juego.Tablero;
 
 public class Controller {
 	private Tablero tablero;
-	private Main main;
+	private Vista main;
 	
-	public Controller (Tablero tablero, Main main) {
+	public Controller (Tablero tablero, Vista main) {
 		this.tablero = tablero;
 		this.main = main;
 		tablero.addObserver(main);

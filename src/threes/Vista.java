@@ -35,7 +35,7 @@ import java.awt.Point;
 import java.awt.Dimension;
 
 
-public class Main implements Observer {
+public class Vista implements Observer {
 
 	private JFrame frmThrees;
 	private JTable tablaDelJuego;
@@ -55,7 +55,7 @@ public class Main implements Observer {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Main window = new Main();
+					Vista window = new Vista();
 					window.frmThrees.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -64,7 +64,7 @@ public class Main implements Observer {
 		});
 	}
 
-	public Main() {
+	public Vista() {
 		initialize();
 		iniciarPartida();
 	}
