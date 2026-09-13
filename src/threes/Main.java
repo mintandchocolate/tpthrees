@@ -18,12 +18,20 @@ import javax.swing.border.LineBorder;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.Font;
 
 import logica_juego.Tablero;
 import logica_juego.Ficha;
 import logica_juego.Movimiento;
+import java.awt.FlowLayout;
+import javax.swing.JLayeredPane;
+import java.awt.Cursor;
+import java.awt.Rectangle;
+import java.awt.Point;
+import java.awt.Dimension;
 
 
 public class Main implements Observer {
@@ -35,6 +43,10 @@ public class Main implements Observer {
 	private Color AZULFICHA = new Color(114, 202, 242);
 	private Color ROJOFICHA = new Color(241, 103, 128);
 
+	public JFrame obtenerFrame() {
+		return frmThrees;
+	}
+	
 	/**
 	 * Launch the application.
 	 */
@@ -53,43 +65,37 @@ public class Main implements Observer {
 
 	public Main() {
 		initialize();
-		funcionalidadTeclas();
 		iniciarPartida();
 	}
 
 	private void iniciarPartida() {
 		tablero = new Tablero();
 		controller = new Controller(tablero, this);
+		controller.funcionalidadTeclas();
 		tablero.iniciarTablero();
 		actualizarTablero(tablero);
+		reiniciarTimerInactividad();
 	}
 	
 	private void initialize() {
 		frmThrees =  new JFrame();
+		frmThrees.getContentPane().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		frmThrees.setTitle("THREES");
 		frmThrees.setResizable(false);
 		frmThrees.setBounds(100, 100, 316, 476);
 		frmThrees.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{300, 0};
-		gridBagLayout.rowHeights = new int[]{437, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-		frmThrees.getContentPane().setLayout(gridBagLayout);
+		frmThrees.getContentPane().setLayout(null);
 		
 		JPanel panelParaElJuego = new JPanel();
+		panelParaElJuego.setBounds(34, 90, 233, 315);
 		panelParaElJuego.setBackground(new Color(255, 255, 255));
-		GridBagConstraints gbc_panelParaElJuego = new GridBagConstraints();
-		gbc_panelParaElJuego.insets = new Insets(80, 30, 35, 30);
-		gbc_panelParaElJuego.weighty = 0.6;
-		gbc_panelParaElJuego.weightx = 0.6;
-		gbc_panelParaElJuego.fill = GridBagConstraints.BOTH;
-		gbc_panelParaElJuego.gridx = 0;
-		gbc_panelParaElJuego.gridy = 0;
-		frmThrees.getContentPane().add(panelParaElJuego, gbc_panelParaElJuego);
+		frmThrees.getContentPane().add(panelParaElJuego);
 		panelParaElJuego.setLayout(new BorderLayout(0, 0));
 		
 		tablaDelJuego = new JTable();
+		tablaDelJuego.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		tablaDelJuego.setRowHeight(79);
+		panelParaElJuego.add(tablaDelJuego, BorderLayout.CENTER);
 		tablaDelJuego.setEnabled(false);
 		tablaDelJuego.setRowSelectionAllowed(false);
 		tablaDelJuego.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -105,6 +111,18 @@ public class Main implements Observer {
 			}
 		));
 		
+		fondoProximaFicha = new JPanel();
+		fondoProximaFicha.setBounds(125, 0, 45, 60);
+		frmThrees.getContentPane().add(fondoProximaFicha);
+		fondoProximaFicha.setBackground(new Color(207, 231, 224));
+		fondoProximaFicha.setLayout(null);
+		
+		proximaFicha = new JPanel();
+		proximaFicha.setSize(new Dimension(25, 25));
+		proximaFicha.setBounds(10, 28, 25, 25);
+		fondoProximaFicha.add(proximaFicha);
+		proximaFicha.setLayout(null);
+		
 		panelParaElJuego.addComponentListener(new java.awt.event.ComponentAdapter() {
 		    @Override
 		    public void componentResized(java.awt.event.ComponentEvent e) {
@@ -114,7 +132,6 @@ public class Main implements Observer {
 		        }
 		    }
 		});
-		panelParaElJuego.add(tablaDelJuego, BorderLayout.CENTER);
 	}
 	
 	//COSAS DEL OBSERVER
@@ -171,7 +188,19 @@ public class Main implements Observer {
 	                    celda.setForeground(Color.BLACK);
 	                }
 	            }
-	            celda.setFont(new Font("Verdana", Font.BOLD, 24));
+	            
+	            boolean casillaPalpitando = false;
+	            if (sugerenciaJugada != null) {
+	                boolean esLaPrimera = (row == sugerenciaJugada[0][0] && column == sugerenciaJugada[0][1]);
+	                boolean esLaSegunda = (row == sugerenciaJugada[1][0] && column == sugerenciaJugada[1][1]);
+	                casillaPalpitando = esLaPrimera || esLaSegunda;
+	            }
+
+	            if (casillaPalpitando) {
+	                celda.setFont(new Font("Verdana", Font.BOLD, tamanioFuenteCasillaSugerida));
+	            } else {
+	            	celda.setFont(new Font("Verdana", Font.BOLD, 24));
+	            }
 	            return celda;
 	        }
 	    };
@@ -179,115 +208,82 @@ public class Main implements Observer {
 	    for (int i = 0; i < tablaDelJuego.getColumnCount(); i++) {
 	        tablaDelJuego.getColumnModel().getColumn(i).setCellRenderer(disenioDeTablas);
 	    }
+	    
+	    actualizarPreviewSiguienteFicha();
 	}
 	
-	// esto se usa para evitar dobles teclas y multiples inputs accidentales
-	private int teclasPresionadas;
-	private boolean bloqueoTeclas = false;
+	private int[][] sugerenciaJugada = null;
+	private Timer palpitaciones;
+	private boolean creciendo = true;
+	private int tamanioFuenteCasillaSugerida = 24;
 	
-	// metodo para poder jugar usando las teclas :p
-	public void funcionalidadTeclas() {
-		JComponent contentPane = (JComponent) frmThrees.getContentPane();
+	public void mostrarSugerencia() {
+		sugerenciaJugada = tablero.jugadaSugerida();
 		
-		contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed UP"), "ARRIBA");
-	    contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released UP"), "SOLTAR_ARRIBA");
-
-	    contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed DOWN"), "ABAJO");
-	    contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released DOWN"), "SOLTAR_ABAJO");
-
-	    contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed LEFT"), "IZQUIERDA");
-	    contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released LEFT"), "SOLTAR_IZQUIERDA");
-
-	    contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("pressed RIGHT"), "DERECHA");
-	    contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released RIGHT"), "SOLTAR_DERECHA");
-	    
-	    contentPane.getActionMap().put("ARRIBA", new AbstractAction() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            teclasPresionadas++;
-	            if (teclasPresionadas == 1 && !bloqueoTeclas) {
-	                bloqueoTeclas = true;
-	                controller.mover(Movimiento.ARRIBA);
-	            }
-	        }
-	    });
-	    
-	    contentPane.getActionMap().put("SOLTAR_ARRIBA", new AbstractAction() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            teclasPresionadas--;
-	            if (teclasPresionadas <= 0) {
-	                teclasPresionadas = 0;
-	                bloqueoTeclas = false;
-	            }
-	        }
-	    });
-
-	    contentPane.getActionMap().put("ABAJO", new AbstractAction() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            teclasPresionadas++;
-	            if (teclasPresionadas == 1 && !bloqueoTeclas) {
-	            	bloqueoTeclas = true;
-	            	controller.mover(Movimiento.ABAJO);
-	            }
-	        }
-	    });
-	    
-	    contentPane.getActionMap().put("SOLTAR_ABAJO", new AbstractAction() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            teclasPresionadas--;
-	            if (teclasPresionadas <= 0) {
-	                teclasPresionadas = 0;
-	                bloqueoTeclas = false;
-	            }
-	        }
-	    });
-
-	    contentPane.getActionMap().put("IZQUIERDA", new AbstractAction() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            teclasPresionadas++;
-	            if (teclasPresionadas == 1 && !bloqueoTeclas) {
-	            	bloqueoTeclas = true;
-	            	controller.mover(Movimiento.IZQUIERDA);
-	            }
-	        }
-	    });
-	    
-	    contentPane.getActionMap().put("SOLTAR_IZQUIERDA", new AbstractAction() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            teclasPresionadas--;
-	            if (teclasPresionadas <= 0) {
-	                teclasPresionadas = 0;
-	                bloqueoTeclas = false;
-	            }
-	        }
-	    });
-
-	    contentPane.getActionMap().put("DERECHA", new AbstractAction() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            teclasPresionadas++;
-	            if (teclasPresionadas == 1 && !bloqueoTeclas) {
-	            	bloqueoTeclas = true;
-	            	controller.mover(Movimiento.DERECHA);
-	            }
-	        }
-	    });
-	    
-	    contentPane.getActionMap().put("SOLTAR_DERECHA", new AbstractAction() {
-	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            teclasPresionadas--;
-	            if (teclasPresionadas <= 0) {
-	                teclasPresionadas = 0;
-	                bloqueoTeclas = false;
-	            }
-	        }
-	    });
+		if (sugerenciaJugada == null) {
+			return;
+		}
+		
+		if (palpitaciones != null) {
+			palpitaciones.stop();
+		}
+		
+		palpitaciones = new Timer(40, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent accion) {
+				if (creciendo) {
+					tamanioFuenteCasillaSugerida++;
+					if (tamanioFuenteCasillaSugerida >= 32) {
+						creciendo = false;
+					}
+				} else {
+					tamanioFuenteCasillaSugerida--;
+					if (tamanioFuenteCasillaSugerida <= 24) {
+						creciendo = true;
+					}
+				}
+				actualizarTablero(tablero);
+			}
+		});
+		
+		palpitaciones.start();
 	}
 	
+	private Timer inactividad;
+	private JPanel fondoProximaFicha;
+	private JPanel proximaFicha;
+	
+	public void reiniciarTimerInactividad() {
+		if (inactividad != null) {
+			inactividad.stop();
+			}
+		sugerenciaJugada = null; 
+		
+		// si no tocas nada por 8 segundos muestra una jugada sugerida :p
+		inactividad = new Timer(8000, new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mostrarSugerencia();
+				}
+			});
+		inactividad.setRepeats(false);
+		inactividad.start();
+	}
+	
+	private void actualizarPreviewSiguienteFicha() {
+		int valorDeFichaSiguiente = tablero.obtenerProximoValor();
+		
+		if (valorDeFichaSiguiente <= 0 || valorDeFichaSiguiente > 3) {
+			return;
+		}
+		
+		if (valorDeFichaSiguiente == 1) {
+			proximaFicha.setBackground(AZULFICHA);
+		} else if (valorDeFichaSiguiente == 2) {
+			proximaFicha.setBackground(ROJOFICHA);
+		} else {
+			proximaFicha.setBackground(Color.WHITE);
+		}
+	}
 }

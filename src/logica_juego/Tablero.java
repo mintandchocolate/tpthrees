@@ -16,11 +16,12 @@ public class Tablero {
     // NUEVO: Variables para balancear la aparicion de fichas 1 y 2
     private int ultimoValorGenerado = -1;
     private int contadorConsecutivos = 0;
+    private int valorFichaProxima = -1;
 
     public Tablero() {
         cuadricula = new Ficha[TAMANIO][TAMANIO];
     }
-
+    
     public Ficha getFicha(int fila, int col) {
         verificarValor(fila);
         verificarValor(col);
@@ -124,9 +125,15 @@ public class Tablero {
                 break;
             }
         }
+        
+        valorFichaProxima = -1;
     }
 
-    private int obtenerProximoValor() {
+    public int obtenerProximoValor() {
+    	if (valorFichaProxima != -1) {
+    		return valorFichaProxima;
+    	}
+    	
         int nuevoValor = randomizador.nextInt(3) + 1;
 
         if (nuevoValor == ultimoValorGenerado) {
@@ -148,7 +155,7 @@ public class Tablero {
             ultimoValorGenerado = nuevoValor;
             contadorConsecutivos = 1;
         }
-
+        valorFichaProxima = nuevoValor;
         return nuevoValor;
     }
 
@@ -199,9 +206,9 @@ public class Tablero {
     // Puntaje acumulado
     public int calcularPuntaje() {
         int puntajeTotal = 0;
-        for (int r = 0; r < TAMANIO; r++) {
-            for (int c = 0; c < TAMANIO; c++) {
-                Ficha f = cuadricula[r][c];
+        for (int fil = 0; fil < TAMANIO; fil++) {
+            for (int col = 0; col < TAMANIO; col++) {
+                Ficha f = cuadricula[fil][col];
                 if (f != null) {
                     puntajeTotal += f.puntaje();
                 }
@@ -218,23 +225,91 @@ public class Tablero {
         }
 
         // 2. Si esta lleno, verificar si alguna ficha adyacente puede sumarse
-        for (int f = 0; f < TAMANIO; f++) {
-            for (int c = 0; c < TAMANIO; c++) {
-                Ficha actual = cuadricula[f][c];
-                
-                // Chequear vecino derecho
-                if (c + 1 < TAMANIO && actual.puedeSumarseCon(cuadricula[f][c + 1])) {
-                    return true;
-                }
-                // Chequear vecino inferior
-                if (f + 1 < TAMANIO && actual.puedeSumarseCon(cuadricula[f + 1][c])) {
-                    return true;
-                }
-            }
+        if (hayAlgunaCombinacionPosible()) {
+        	return true;
         }
         return false;
     }
 
+    private boolean hayAlgunaCombinacionPosible() {
+    	for (int fil = 0; fil < TAMANIO; fil++) {
+            for (int col = 0; col < TAMANIO; col++) {
+                Ficha actual = cuadricula[fil][col];
+                
+                // Chequear vecino derecho
+                if (posibleCombinarseConVecino(Movimiento.DERECHA, actual, fil, col)) {
+                    return true;
+                }
+                // Chequear vecino inferior
+                if (posibleCombinarseConVecino(Movimiento.ABAJO, actual, fil, col)) {
+                    return true;
+                }
+            }
+        }
+    	return false;
+    }
+    
+    public boolean posibleCombinarseConVecino(Movimiento direccion, Ficha ficha, int fil, int col) {
+    	
+    	if (ficha == null) {
+    		return false;
+    	}
+    	
+    	switch (direccion) {
+    		case ARRIBA:
+    			if (dentroDeLimites(fil - 1, col) && ficha.puedeSumarseCon(cuadricula[fil - 1][col])) {
+    				return true;
+    			} return false;
+    			
+    		case ABAJO:
+    			if (dentroDeLimites(fil + 1, col) && ficha.puedeSumarseCon(cuadricula[fil + 1][col])) {
+    				return true;
+    			} return false;
+    			
+    		case IZQUIERDA:
+    			if (dentroDeLimites(fil, col - 1) && ficha.puedeSumarseCon(cuadricula[fil][col - 1])) {
+    				return true;
+    			} return false;
+    			
+    		case DERECHA:
+    			if (dentroDeLimites(fil, col + 1) && ficha.puedeSumarseCon(cuadricula[fil][col + 1])) {
+    				return true;
+    			} return false;
+    			
+    		default:
+    			throw new IllegalArgumentException("direccion invalida");
+    	}
+    }
+    
+    // * EXTRA *
+    public int[][] jugadaSugerida() {
+    	int[] primerCoordenada = null;
+    	int[] segundaCoordenada = null;
+    	int[][] parCoordenadas = null;
+    	
+    	if (hayAlgunaCombinacionPosible()) {
+    		while (segundaCoordenada == null) {
+    			
+    			int filaAleatoria = randomizador.nextInt(4);
+    			int columnaAleatoria = randomizador.nextInt(4);
+    			primerCoordenada = new int[]{filaAleatoria, columnaAleatoria};
+    			
+    			Ficha fichaCorrespondiente = getFicha(filaAleatoria, columnaAleatoria);
+    			if (posibleCombinarseConVecino(Movimiento.ARRIBA, fichaCorrespondiente, filaAleatoria, columnaAleatoria)) {
+    				segundaCoordenada = new int[]{filaAleatoria - 1, columnaAleatoria};
+    			} else if (posibleCombinarseConVecino(Movimiento.ABAJO, fichaCorrespondiente, filaAleatoria, columnaAleatoria)) {
+    				segundaCoordenada = new int[]{filaAleatoria + 1, columnaAleatoria};
+    			} else if (posibleCombinarseConVecino(Movimiento.IZQUIERDA, fichaCorrespondiente, filaAleatoria, columnaAleatoria)) {
+    				segundaCoordenada = new int[]{filaAleatoria, columnaAleatoria - 1};
+    			} else if (posibleCombinarseConVecino(Movimiento.DERECHA, fichaCorrespondiente, filaAleatoria, columnaAleatoria)) {
+    				segundaCoordenada = new int[]{filaAleatoria, columnaAleatoria};
+    			}
+    		}
+    		parCoordenadas = new int[][]{primerCoordenada, segundaCoordenada};
+    	}
+    	return parCoordenadas;
+    }
+    
     private int[] ordenDeMovimiento(int posicion) {
         int[] ordenAvance = new int[TAMANIO];
         if (posicion > 0) {
