@@ -18,6 +18,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -139,12 +140,38 @@ public class Main implements Observer {
 	public void tableroActualizado(Tablero tablero) {
 		actualizarTablero(tablero);
 		verificarFinDelJuego();
-
 	}
 	
 	private void verificarFinDelJuego() {
 		if (!tablero.hayMovimientosPosibles()) {
-			//mostrarDialogoGameOver();
+			mostrarDialogoGameOver();
+		}
+	}
+
+	private void mostrarDialogoGameOver() {
+		if (inactividad != null) {
+			inactividad.stop();
+		}
+		if (palpitaciones != null) {
+			palpitaciones.stop();
+		}
+
+		Object[] opciones = {"Reiniciar", "Salir"};
+		int eleccion = JOptionPane.showOptionDialog(
+			frmThrees,
+			"¡Game Over! No quedan más movimientos posibles.",
+			"Fin del Juego",
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.INFORMATION_MESSAGE,
+			null,
+			opciones,
+			opciones[0]
+		);
+
+		if (eleccion == JOptionPane.YES_OPTION) {
+			iniciarPartida();
+		} else {
+			System.exit(0);
 		}
 	}
 
@@ -256,7 +283,7 @@ public class Main implements Observer {
 	public void reiniciarTimerInactividad() {
 		if (inactividad != null) {
 			inactividad.stop();
-			}
+		}
 		sugerenciaJugada = null; 
 		
 		// si no tocas nada por 8 segundos muestra una jugada sugerida :p
@@ -265,8 +292,8 @@ public class Main implements Observer {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mostrarSugerencia();
-				}
-			});
+			}
+		});
 		inactividad.setRepeats(false);
 		inactividad.start();
 	}
